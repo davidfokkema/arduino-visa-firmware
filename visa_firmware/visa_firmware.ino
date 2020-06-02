@@ -1,3 +1,6 @@
+#define COMM_IDN    "*IDN?"
+#define IDN_STRING  "Arduino VISA firmware v0.1"
+
 void setup() {
   Serial.begin(9600);
   Serial.setTimeout(-1);
@@ -8,6 +11,12 @@ void loop() {
   String msg;
   
   msg = Serial.readStringUntil('\n');
-  Serial.print("I have received: ");
-  Serial.println(msg);
+
+  if (msg == COMM_IDN) {
+    Serial.println(IDN_STRING);
+  }
+  else {
+    Serial.print("I have received: ");
+    Serial.println(msg);
+  }
 }
