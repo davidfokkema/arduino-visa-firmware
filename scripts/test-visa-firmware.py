@@ -7,3 +7,4 @@ dev.write_termination = '\n'
 dev.read_termination = '\r\n'
 
 print(dev.query("*IDN?"))
+print(dev.query("OUT:CH1 434"))
