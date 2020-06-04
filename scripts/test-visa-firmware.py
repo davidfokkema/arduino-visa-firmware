@@ -10,12 +10,10 @@ dev.read_termination = '\r\n'
 
 
 print(dev.query("*IDN?"))
-print(dev.query("OUT:CH1 511"))
-time.sleep(.5)
-print(dev.query("OUT:CH1 767"))
-time.sleep(.5)
 print(dev.query("OUT:CH1 1023"))
-time.sleep(1)
 print(dev.query("OUT:CH1?"))
-print(dev.query("OUT:CH1 0"))
-print(dev.query("OUT:CH1?"))
+time.sleep(.5)
+
+for i in range(0, 1023):
+    dev.query(f"OUT:CH1 {i}")
+    print(i, dev.query("MEAS:CH2:VAL?"))

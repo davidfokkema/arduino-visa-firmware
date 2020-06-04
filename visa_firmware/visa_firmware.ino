@@ -4,7 +4,9 @@
 
 #define COM_IDN       "*IDN?"                 // literal *IDN?
 #define COM_WRITE_DAC "^OUT:CH(%d) (%d+)$"    // e.g. OUT:CH1 1023
-#define COM_READ_DAC  "^OUT:CH(%d)?$"         // e.g. OUT:CH1?
+#define COM_READ_DAC  "^OUT:CH(%d)%?$"         // e.g. OUT:CH1?
+#define COM_READ_ADC  "^MEAS:CH(%d):VAL%?$"    // e.g. MEAS:CH1:VAL?
+
 
 #define IDN_STRING    "Arduino VISA firmware v0.1"
 
@@ -59,6 +61,11 @@ void loop() {
   else if (ms.Match(COM_READ_DAC) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
     Serial.println(DACvalues[channel - 1]);
+  }
+  // request ADC measurement value
+  else if (ms.Match(COM_READ_ADC) == 1) {
+    channel = atoi(ms.GetCapture(buffer, 0));
+    Serial.println(analogRead(ADCchannel[channel - 1]));
   }
   // unknown command
   else {
