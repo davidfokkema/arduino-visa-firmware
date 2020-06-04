@@ -2,9 +2,9 @@
 
 #define DAC_BITS      10
 
-#define COM_IDN       "*IDN?"
-#define COM_WRITE_DAC "^OUT:CH(%d) (%d+)$"
-#define COM_READ_DAC  "^OUT:CH(%d)?$"
+#define COM_IDN       "*IDN?"                 // literal *IDN?
+#define COM_WRITE_DAC "^OUT:CH(%d) (%d+)$"    // e.g. OUT:CH1 1023
+#define COM_READ_DAC  "^OUT:CH(%d)?$"         // e.g. OUT:CH1?
 
 #define IDN_STRING    "Arduino VISA firmware v0.1"
 
@@ -25,6 +25,7 @@ void setup() {
   Serial.setTimeout(-1);
   Serial.flush();
 
+  // setup DAC channel(s)
   analogWriteResolution(DAC_BITS);
   for (i = 0; i < MAX_DAC_CHANNEL; i ++) {
     analogWrite(DACchannel[i], 0);
@@ -42,9 +43,11 @@ void loop() {
   msg.toCharArray(buffer, BUFFER_LENGTH);
   ms.Target(buffer);
 
+  // request identification
   if (msg == COM_IDN) {
     Serial.println(IDN_STRING);
   }
+  // write DAC value
   else if (ms.Match(COM_WRITE_DAC) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
     value = atoi(ms.GetCapture(buffer, 1));
@@ -52,12 +55,14 @@ void loop() {
     DACvalues[channel - 1] = value;
     Serial.println(value);
   }
+  // request current DAC value
   else if (ms.Match(COM_READ_DAC) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
     Serial.println(DACvalues[channel - 1]);
   }
+  // unknown command
   else {
-    Serial.print("UNKNOWN COMMAND: ");
+    Serial.print("ERROR: UNKNOWN COMMAND ");
     Serial.println(msg);
   }
 }
