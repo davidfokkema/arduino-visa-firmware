@@ -14,6 +14,9 @@ print(dev.query("OUT:CH1 1023"))
 print(dev.query("OUT:CH1?"))
 time.sleep(.5)
 
-for i in range(0, 1023):
+for i in range(0, 1024):
     dev.query(f"OUT:CH1 {i}")
-    print(i, dev.query("MEAS:CH2:VAL?"))
+    print(i, dev.query("MEAS:CH2:VAL?"), dev.query("MEAS:CH2:VOLT?"), dev.query("MEAS:CH3:VOLT?"))
+
+time.sleep(.5)
+print(dev.query("OUT:CH1 0"))

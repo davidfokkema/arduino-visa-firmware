@@ -1,14 +1,15 @@
 #include <Regexp.h>
 
 #define DAC_BITS      10
+#define VOLTAGE       3.3
 
-#define COM_IDN       "*IDN?"                 // literal *IDN?
-#define COM_WRITE_DAC "^OUT:CH(%d) (%d+)$"    // e.g. OUT:CH1 1023
-#define COM_READ_DAC  "^OUT:CH(%d)%?$"         // e.g. OUT:CH1?
-#define COM_READ_ADC  "^MEAS:CH(%d):VAL%?$"    // e.g. MEAS:CH1:VAL?
+#define COM_IDN           "*IDN?"                 // literal *IDN?
+#define COM_WRITE_DAC     "^OUT:CH(%d) (%d+)$"    // e.g. OUT:CH1 1023
+#define COM_READ_DAC      "^OUT:CH(%d)%?$"        // e.g. OUT:CH1?
+#define COM_READ_ADC      "^MEAS:CH(%d):VAL%?$"   // e.g. MEAS:CH1:VAL?
+#define COM_READ_ADC_VOLT "^MEAS:CH(%d):VOLT%?$"  // e.g. MEAS:CH1:VOLT?
 
-
-#define IDN_STRING    "Arduino VISA firmware v0.1"
+#define IDN_STRING        "Arduino VISA firmware v0.1"
 
 #define BUFFER_LENGTH 100
 
@@ -40,6 +41,7 @@ void loop() {
   MatchState ms;
   char buffer[BUFFER_LENGTH];
   int channel, value;
+  float volt;
 
   // read line from serial connection
   msg = Serial.readStringUntil('\n');
@@ -73,9 +75,21 @@ void loop() {
     Serial.println(analogRead(ADCchannel[channel - 1]));
   }
   
+  // request ADC measurement value in volts
+  else if (ms.Match(COM_READ_ADC_VOLT) == 1) {
+    channel = atoi(ms.GetCapture(buffer, 0));
+    value = analogRead(ADCchannel[channel - 1]);
+    volt = fmap(value, 0, 1023, 0, VOLTAGE);
+    Serial.println(volt);
+  }
+
   // unknown command
   else {
     Serial.print("ERROR: UNKNOWN COMMAND ");
     Serial.println(msg);
   }
+}
+
+float fmap(float x, float in_min, float in_max, float out_min, float out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
