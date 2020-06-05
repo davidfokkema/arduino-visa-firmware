@@ -41,7 +41,9 @@ void loop() {
   char buffer[BUFFER_LENGTH];
   int channel, value;
 
+  // read line from serial connection
   msg = Serial.readStringUntil('\n');
+  // and save to buffer for regex matching
   msg.toCharArray(buffer, BUFFER_LENGTH);
   ms.Target(buffer);
 
@@ -49,6 +51,7 @@ void loop() {
   if (msg == COM_IDN) {
     Serial.println(IDN_STRING);
   }
+  
   // write DAC value
   else if (ms.Match(COM_WRITE_DAC) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
@@ -57,16 +60,19 @@ void loop() {
     DACvalues[channel - 1] = value;
     Serial.println(value);
   }
+  
   // request current DAC value
   else if (ms.Match(COM_READ_DAC) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
     Serial.println(DACvalues[channel - 1]);
   }
+  
   // request ADC measurement value
   else if (ms.Match(COM_READ_ADC) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
     Serial.println(analogRead(ADCchannel[channel - 1]));
   }
+  
   // unknown command
   else {
     Serial.print("ERROR: UNKNOWN COMMAND ");
