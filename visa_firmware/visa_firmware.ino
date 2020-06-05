@@ -1,3 +1,16 @@
+/*  Simple (almost) VISA-compliant firmware for Arduino (Nano 33 IoT)
+
+    This code implements SCPI-like commands. All commands only have one form;
+    there is no distinction between full-length and abbreviated commands. Also,
+    all commands should be send in uppercase without leading or trailing
+    whitespace. Lastly, this code only accepts single commands. Multiple
+    commands separated by semicolons are NOT supported.
+
+    The firmware initializes both ADC and DAC to use 10-bit resolution and
+    expects the operating voltage to be 3.3 V. For other boards than the Arduino
+    Nano 33 IoT, change those values if necessary.
+*/
+
 #include <Regexp.h>
 
 #define DAC_BITS      10
@@ -30,7 +43,8 @@ void setup() {
   Serial.setTimeout(-1);
   Serial.flush();
 
-  // setup DAC channel(s)
+  // setup ADC and DAC channel(s)
+  analogReadResolution(DAC_BITS);
   analogWriteResolution(DAC_BITS);
   for (i = 0; i < MAX_DAC_CHANNEL; i ++) {
     analogWrite(DACchannel[i], 0);
@@ -55,7 +69,7 @@ void loop() {
   if (msg == COM_IDN) {
     Serial.println(IDN_STRING);
   }
-  
+
   // write DAC value
   else if (ms.Match(COM_WRITE_DAC) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
@@ -64,7 +78,7 @@ void loop() {
     DACvalues[channel - 1] = value;
     Serial.println(value);
   }
-  
+
   // write DAC value in volts
   else if (ms.Match(COM_WRITE_DAC_VOLT) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
@@ -80,7 +94,7 @@ void loop() {
     channel = atoi(ms.GetCapture(buffer, 0));
     Serial.println(DACvalues[channel - 1]);
   }
-  
+
   // request current DAC value in volts
   else if (ms.Match(COM_READ_DAC_VOLT) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
@@ -94,7 +108,7 @@ void loop() {
     channel = atoi(ms.GetCapture(buffer, 0));
     Serial.println(analogRead(ADCchannel[channel - 1]));
   }
-  
+
   // request ADC measurement value in volts
   else if (ms.Match(COM_READ_ADC_VOLT) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
