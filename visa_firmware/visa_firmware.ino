@@ -22,7 +22,7 @@ int DACvalues[MAX_DAC_CHANNEL];
 
 void setup() {
   int i;
-  
+
   Serial.begin(9600);
   Serial.setTimeout(-1);
   Serial.flush();
@@ -40,7 +40,7 @@ void loop() {
   MatchState ms;
   char buffer[BUFFER_LENGTH];
   int channel, value;
-  
+
   msg = Serial.readStringUntil('\n');
   msg.toCharArray(buffer, BUFFER_LENGTH);
   ms.Target(buffer);
