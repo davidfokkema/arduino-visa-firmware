@@ -3,11 +3,13 @@
 #define DAC_BITS      10
 #define VOLTAGE       3.3
 
-#define COM_IDN           "*IDN?"                 // literal *IDN?
-#define COM_WRITE_DAC     "^OUT:CH(%d) (%d+)$"    // e.g. OUT:CH1 1023
-#define COM_READ_DAC      "^OUT:CH(%d)%?$"        // e.g. OUT:CH1?
-#define COM_READ_ADC      "^MEAS:CH(%d):VAL%?$"   // e.g. MEAS:CH1:VAL?
-#define COM_READ_ADC_VOLT "^MEAS:CH(%d):VOLT%?$"  // e.g. MEAS:CH1:VOLT?
+#define COM_IDN             "*IDN?"                       // literal *IDN?
+#define COM_WRITE_DAC       "^OUT:CH(%d) (%d+)$"          // e.g. OUT:CH1 1023
+#define COM_WRITE_DAC_VOLT  "^OUT:CH(%d):VOLT ([.%d]+)$"  // e.g. OUT:CH1:VOLT 2.5
+#define COM_READ_DAC        "^OUT:CH(%d)%?$"              // e.g. OUT:CH1?
+#define COM_READ_DAC_VOLT   "^OUT:CH(%d):VOLT%?$"         // e.g. OUT:CH1:VOLT?
+#define COM_READ_ADC        "^MEAS:CH(%d)%?$"             // e.g. MEAS:CH1?
+#define COM_READ_ADC_VOLT   "^MEAS:CH(%d):VOLT%?$"        // e.g. MEAS:CH1:VOLT?
 
 #define IDN_STRING        "Arduino VISA firmware v0.1"
 
@@ -63,12 +65,30 @@ void loop() {
     Serial.println(value);
   }
   
+  // write DAC value in volts
+  else if (ms.Match(COM_WRITE_DAC_VOLT) == 1) {
+    channel = atoi(ms.GetCapture(buffer, 0));
+    volt = atof(ms.GetCapture(buffer, 1));
+    value = int(fmap(volt, 0, VOLTAGE, 0, 1023));
+    analogWrite(DACchannel[channel - 1], value);
+    DACvalues[channel - 1] = value;
+    Serial.println(volt);
+  }
+
   // request current DAC value
   else if (ms.Match(COM_READ_DAC) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
     Serial.println(DACvalues[channel - 1]);
   }
   
+  // request current DAC value in volts
+  else if (ms.Match(COM_READ_DAC_VOLT) == 1) {
+    channel = atoi(ms.GetCapture(buffer, 0));
+    value = DACvalues[channel - 1];
+    volt = fmap(value, 0, 1023, 0, VOLTAGE);
+    Serial.println(volt);
+  }
+
   // request ADC measurement value
   else if (ms.Match(COM_READ_ADC) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
@@ -91,5 +111,6 @@ void loop() {
 }
 
 float fmap(float x, float in_min, float in_max, float out_min, float out_max) {
+  // map()-replacement using floating point math
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
