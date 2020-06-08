@@ -42,6 +42,7 @@
 #define COM_READ_ADC_VOLT   "^MEAS:CH(%d):VOLT%?$"        // e.g. MEAS:CH1:VOLT?
 
 #define IDN_STRING          "Arduino VISA firmware v0.1"
+#define INVALID_CHANNEL_MSG "ERROR: Invalid channel number"
 
 #define BUFFER_LENGTH 100
 
@@ -90,48 +91,66 @@ void loop() {
   // write DAC value
   else if (ms.Match(COM_WRITE_DAC) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
-    value = atoi(ms.GetCapture(buffer, 1));
-    analogWrite(DACchannel[channel - 1], value);
-    DACvalues[channel - 1] = value;
-    Serial.println(value);
+    if (channel > 0 && channel <= MAX_DAC_CHANNEL) {
+      value = atoi(ms.GetCapture(buffer, 1));
+      analogWrite(DACchannel[channel - 1], value);
+      DACvalues[channel - 1] = value;
+      Serial.println(value);
+    }
+    else Serial.println(INVALID_CHANNEL_MSG);
   }
 
   // write DAC value in volts
   else if (ms.Match(COM_WRITE_DAC_VOLT) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
-    volt = atof(ms.GetCapture(buffer, 1));
-    value = int(fmap(volt, 0, VOLTAGE, 0, 1023));
-    analogWrite(DACchannel[channel - 1], value);
-    DACvalues[channel - 1] = value;
-    Serial.println(volt);
+    if (channel > 0 && channel <= MAX_DAC_CHANNEL) {
+      volt = atof(ms.GetCapture(buffer, 1));
+      value = int(fmap(volt, 0, VOLTAGE, 0, 1023));
+      analogWrite(DACchannel[channel - 1], value);
+      DACvalues[channel - 1] = value;
+      Serial.println(volt);
+    }
+    else Serial.println(INVALID_CHANNEL_MSG);
   }
 
   // request current DAC value
   else if (ms.Match(COM_READ_DAC) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
-    Serial.println(DACvalues[channel - 1]);
+    if (channel > 0 && channel <= MAX_DAC_CHANNEL) {
+      Serial.println(DACvalues[channel - 1]);
+    }
+    else Serial.println(INVALID_CHANNEL_MSG);
   }
 
   // request current DAC value in volts
   else if (ms.Match(COM_READ_DAC_VOLT) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
-    value = DACvalues[channel - 1];
-    volt = fmap(value, 0, 1023, 0, VOLTAGE);
-    Serial.println(volt);
+    if (channel > 0 && channel <= MAX_DAC_CHANNEL) {
+      value = DACvalues[channel - 1];
+      volt = fmap(value, 0, 1023, 0, VOLTAGE);
+      Serial.println(volt);
+    }
+    else Serial.println(INVALID_CHANNEL_MSG);
   }
 
   // request ADC measurement value
   else if (ms.Match(COM_READ_ADC) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
-    Serial.println(analogRead(ADCchannel[channel - 1]));
+    if (channel > 0 && channel <= MAX_ADC_CHANNEL) {
+      Serial.println(analogRead(ADCchannel[channel - 1]));
+    }
+    else Serial.println(INVALID_CHANNEL_MSG);
   }
 
   // request ADC measurement value in volts
   else if (ms.Match(COM_READ_ADC_VOLT) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
-    value = analogRead(ADCchannel[channel - 1]);
-    volt = fmap(value, 0, 1023, 0, VOLTAGE);
-    Serial.println(volt);
+    if (channel > 0 && channel <= MAX_ADC_CHANNEL) {
+      value = analogRead(ADCchannel[channel - 1]);
+      volt = fmap(value, 0, 1023, 0, VOLTAGE);
+      Serial.println(volt);
+    }
+    else Serial.println(INVALID_CHANNEL_MSG);
   }
 
   // unknown command
