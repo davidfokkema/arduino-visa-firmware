@@ -9,6 +9,23 @@
     The firmware initializes both ADC and DAC to use 10-bit resolution and
     expects the operating voltage to be 3.3 V. For other boards than the Arduino
     Nano 33 IoT, change those values if necessary.
+
+    Commands to the device should be terminated with a linefeed '\n'. Commands
+    from the device are terminated with a carriage return and linefeed '\r\n'.
+
+    Example usage:
+
+    > *IDN?
+    Arduino VISA firmware v0.1
+    > OUT:CH1:VOLT 2.8
+    2.80
+    > MEAS:CH2?
+    292
+    > MEAS:CH2:VOLT?
+    0.95
+    > MEAS:CH3:VOLT?
+    2.75
+
 */
 
 #include <Regexp.h>
@@ -24,7 +41,7 @@
 #define COM_READ_ADC        "^MEAS:CH(%d)%?$"             // e.g. MEAS:CH1?
 #define COM_READ_ADC_VOLT   "^MEAS:CH(%d):VOLT%?$"        // e.g. MEAS:CH1:VOLT?
 
-#define IDN_STRING        "Arduino VISA firmware v0.1"
+#define IDN_STRING          "Arduino VISA firmware v0.1"
 
 #define BUFFER_LENGTH 100
 
@@ -125,6 +142,6 @@ void loop() {
 }
 
 float fmap(float x, float in_min, float in_max, float out_min, float out_max) {
-  // map()-replacement using floating point math
+  /* map()-replacement using floating point math */
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }

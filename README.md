@@ -11,3 +11,20 @@ commands separated by semicolons are NOT supported.
 The firmware initializes both ADC and DAC to use 10-bit resolution and
 expects the operating voltage to be 3.3 V. For other boards than the Arduino
 Nano 33 IoT, change those values if necessary.
+
+Commands to the device should be terminated with a linefeed '\n'. Commands
+from the device are terminated with a carriage return and linefeed '\r\n'.
+
+Example usage:
+```
+> *IDN?
+Arduino VISA firmware v0.1
+> OUT:CH1:VOLT 2.8
+2.80
+> MEAS:CH2?
+292
+> MEAS:CH2:VOLT?
+0.95
+> MEAS:CH3:VOLT?
+2.75
+```
