@@ -22,18 +22,18 @@ Example usage:
 Arduino VISA firmware v0.1
 
 # Set the first analog output channel to output 2.8 V
-> OUT:CH1:VOLT 2.8
+> OUT:CH0:VOLT 2.8
 2.80
 
 # Measure the signal on the second analog input channel (raw value)
-> MEAS:CH2?
+> MEAS:CH1?
 292
 
 # Measure the signal on the second analog input channel (in volts)
-> MEAS:CH2:VOLT?
+> MEAS:CH1:VOLT?
 0.95
 
 # Measure the signal on the third analog input channel (in volts)
-> MEAS:CH3:VOLT?
+> MEAS:CH2:VOLT?
 2.75
 ```

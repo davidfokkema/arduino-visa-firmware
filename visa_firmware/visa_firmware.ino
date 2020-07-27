@@ -17,13 +17,13 @@
 
     > *IDN?
     Arduino VISA firmware v0.1
-    > OUT:CH1:VOLT 2.8
+    > OUT:CH0:VOLT 2.8
     2.80
-    > MEAS:CH2?
+    > MEAS:CH1?
     292
-    > MEAS:CH2:VOLT?
+    > MEAS:CH1:VOLT?
     0.95
-    > MEAS:CH3:VOLT?
+    > MEAS:CH2:VOLT?
     2.75
 
 */
@@ -34,10 +34,10 @@
 #define VOLTAGE       3.3
 
 #define COM_IDN             "*IDN?"                       // literal *IDN?
-#define COM_WRITE_DAC       "^OUT:CH(%d) (%d+)$"          // e.g. OUT:CH1 1023
-#define COM_WRITE_DAC_VOLT  "^OUT:CH(%d):VOLT ([.%d]+)$"  // e.g. OUT:CH1:VOLT 2.5
-#define COM_READ_DAC        "^OUT:CH(%d)%?$"              // e.g. OUT:CH1?
-#define COM_READ_DAC_VOLT   "^OUT:CH(%d):VOLT%?$"         // e.g. OUT:CH1:VOLT?
+#define COM_WRITE_DAC       "^OUT:CH(%d) (%d+)$"          // e.g. OUT:CH0 1023
+#define COM_WRITE_DAC_VOLT  "^OUT:CH(%d):VOLT ([.%d]+)$"  // e.g. OUT:CH0:VOLT 2.5
+#define COM_READ_DAC        "^OUT:CH(%d)%?$"              // e.g. OUT:CH0?
+#define COM_READ_DAC_VOLT   "^OUT:CH(%d):VOLT%?$"         // e.g. OUT:CH0:VOLT?
 #define COM_READ_ADC        "^MEAS:CH(%d)%?$"             // e.g. MEAS:CH1?
 #define COM_READ_ADC_VOLT   "^MEAS:CH(%d):VOLT%?$"        // e.g. MEAS:CH1:VOLT?
 
@@ -91,10 +91,10 @@ void loop() {
   // write DAC value
   else if (ms.Match(COM_WRITE_DAC) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
-    if (channel > 0 && channel <= MAX_DAC_CHANNEL) {
+    if (channel >= 0 && channel < MAX_DAC_CHANNEL) {
       value = atoi(ms.GetCapture(buffer, 1));
-      analogWrite(DACchannel[channel - 1], value);
-      DACvalues[channel - 1] = value;
+      analogWrite(DACchannel[channel], value);
+      DACvalues[channel] = value;
       Serial.println(value);
     }
     else Serial.println(INVALID_CHANNEL_MSG);
@@ -103,11 +103,11 @@ void loop() {
   // write DAC value in volts
   else if (ms.Match(COM_WRITE_DAC_VOLT) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
-    if (channel > 0 && channel <= MAX_DAC_CHANNEL) {
+    if (channel >= 0 && channel < MAX_DAC_CHANNEL) {
       volt = atof(ms.GetCapture(buffer, 1));
       value = int(fmap(volt, 0, VOLTAGE, 0, 1023));
-      analogWrite(DACchannel[channel - 1], value);
-      DACvalues[channel - 1] = value;
+      analogWrite(DACchannel[channel], value);
+      DACvalues[channel] = value;
       Serial.println(volt);
     }
     else Serial.println(INVALID_CHANNEL_MSG);
@@ -116,8 +116,8 @@ void loop() {
   // request current DAC value
   else if (ms.Match(COM_READ_DAC) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
-    if (channel > 0 && channel <= MAX_DAC_CHANNEL) {
-      Serial.println(DACvalues[channel - 1]);
+    if (channel >= 0 && channel < MAX_DAC_CHANNEL) {
+      Serial.println(DACvalues[channel]);
     }
     else Serial.println(INVALID_CHANNEL_MSG);
   }
@@ -125,8 +125,8 @@ void loop() {
   // request current DAC value in volts
   else if (ms.Match(COM_READ_DAC_VOLT) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
-    if (channel > 0 && channel <= MAX_DAC_CHANNEL) {
-      value = DACvalues[channel - 1];
+    if (channel >= 0 && channel < MAX_DAC_CHANNEL) {
+      value = DACvalues[channel];
       volt = fmap(value, 0, 1023, 0, VOLTAGE);
       Serial.println(volt);
     }
@@ -136,8 +136,8 @@ void loop() {
   // request ADC measurement value
   else if (ms.Match(COM_READ_ADC) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
-    if (channel > 0 && channel <= MAX_ADC_CHANNEL) {
-      Serial.println(analogRead(ADCchannel[channel - 1]));
+    if (channel >= 0 && channel < MAX_ADC_CHANNEL) {
+      Serial.println(analogRead(ADCchannel[channel]));
     }
     else Serial.println(INVALID_CHANNEL_MSG);
   }
@@ -145,8 +145,8 @@ void loop() {
   // request ADC measurement value in volts
   else if (ms.Match(COM_READ_ADC_VOLT) == 1) {
     channel = atoi(ms.GetCapture(buffer, 0));
-    if (channel > 0 && channel <= MAX_ADC_CHANNEL) {
-      value = analogRead(ADCchannel[channel - 1]);
+    if (channel >= 0 && channel < MAX_ADC_CHANNEL) {
+      value = analogRead(ADCchannel[channel]);
       volt = fmap(value, 0, 1023, 0, VOLTAGE);
       Serial.println(volt);
     }
