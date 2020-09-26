@@ -16,7 +16,7 @@
     Example usage:
 
     > *IDN?
-    Arduino VISA firmware v0.1
+    Arduino VISA firmware v0.2
     > OUT:CH0:VOLT 2.8
     2.80
     > MEAS:CH1?
@@ -41,7 +41,7 @@
 #define COM_READ_ADC        "^MEAS:CH(%d)%?$"             // e.g. MEAS:CH1?
 #define COM_READ_ADC_VOLT   "^MEAS:CH(%d):VOLT%?$"        // e.g. MEAS:CH1:VOLT?
 
-#define IDN_STRING          "Arduino VISA firmware v0.1"
+#define IDN_STRING          "Arduino VISA firmware v0.2"
 #define INVALID_CHANNEL_MSG "ERROR: Invalid channel number"
 
 #define BUFFER_LENGTH 100

@@ -19,7 +19,7 @@ Example usage:
 ```
 # Ask for identification
 > *IDN?
-Arduino VISA firmware v0.1
+Arduino VISA firmware v0.2
 
 # Set the first analog output channel to output 2.8 V
 > OUT:CH0:VOLT 2.8
