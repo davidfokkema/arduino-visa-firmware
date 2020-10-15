@@ -61,7 +61,8 @@ void setup() {
   Serial.setTimeout(-1);
   Serial.flush();
 
-  // setup DAC channel(s)
+  // setup ADC and DAC channel(s)
+  analogReadResolution(DAC_BITS);
   analogWriteResolution(DAC_BITS);
   for (i = 0; i < MAX_DAC_CHANNEL; i ++) {
     analogWrite(DACchannel[i], 0);
@@ -77,8 +78,7 @@ void setup() {
    *      necessary because the inputs are very noisy.
    */
   #ifdef _SAMD21_ADC_COMPONENT_
-    ADC->CTRLB.reg = ADC_CTRLB_PRESCALER_DIV16 |
-        ADC_CTRLB_RESSEL_10BIT;
+    ADC->CTRLB.bit.PRESCALER = ADC_CTRLB_PRESCALER_DIV16_Val;
     while (ADC->STATUS.bit.SYNCBUSY == 1);
     ADC->AVGCTRL.reg = ADC_AVGCTRL_SAMPLENUM_64 |
         ADC_AVGCTRL_ADJRES(4);
