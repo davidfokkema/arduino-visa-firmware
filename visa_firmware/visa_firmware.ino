@@ -16,15 +16,15 @@
     Example usage:
 
     > *IDN?
-    Arduino VISA firmware v0.2
+    Arduino VISA firmware v1.0.0
     > OUT:CH0:VOLT 2.8
-    2.80
+    2.8000
     > MEAS:CH1?
-    292
+    853
     > MEAS:CH1:VOLT?
-    0.95
+    2.7097
     > MEAS:CH2:VOLT?
-    2.75
+    0.9968
 
 */
 
@@ -41,7 +41,7 @@
 #define COM_READ_ADC        "^MEAS:CH(%d)%?$"             // e.g. MEAS:CH1?
 #define COM_READ_ADC_VOLT   "^MEAS:CH(%d):VOLT%?$"        // e.g. MEAS:CH1:VOLT?
 
-#define IDN_STRING          "Arduino VISA firmware v0.2"
+#define IDN_STRING          "Arduino VISA firmware v1.0.0"
 #define INVALID_CHANNEL_MSG "ERROR: Invalid channel number"
 
 #define BUFFER_LENGTH 100
@@ -108,7 +108,7 @@ void loop() {
       value = int(fmap(volt, 0, VOLTAGE, 0, 1023));
       analogWrite(DACchannel[channel], value);
       DACvalues[channel] = value;
-      Serial.println(volt);
+      Serial.println(volt, 4);
     }
     else Serial.println(INVALID_CHANNEL_MSG);
   }
@@ -128,7 +128,7 @@ void loop() {
     if (channel >= 0 && channel < MAX_DAC_CHANNEL) {
       value = DACvalues[channel];
       volt = fmap(value, 0, 1023, 0, VOLTAGE);
-      Serial.println(volt);
+      Serial.println(volt, 4);
     }
     else Serial.println(INVALID_CHANNEL_MSG);
   }
@@ -148,7 +148,7 @@ void loop() {
     if (channel >= 0 && channel < MAX_ADC_CHANNEL) {
       value = analogRead(ADCchannel[channel]);
       volt = fmap(value, 0, 1023, 0, VOLTAGE);
-      Serial.println(volt);
+      Serial.println(volt, 4);
     }
     else Serial.println(INVALID_CHANNEL_MSG);
   }

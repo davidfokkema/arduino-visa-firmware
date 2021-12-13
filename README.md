@@ -19,21 +19,21 @@ Example usage:
 ```
 # Ask for identification
 > *IDN?
-Arduino VISA firmware v0.2
+Arduino VISA firmware v1.0.0
 
 # Set the first analog output channel to output 2.8 V
 > OUT:CH0:VOLT 2.8
-2.80
+2.8000
 
 # Measure the signal on the second analog input channel (raw value)
 > MEAS:CH1?
-292
+853
 
 # Measure the signal on the second analog input channel (in volts)
 > MEAS:CH1:VOLT?
-0.95
+2.7097
 
 # Measure the signal on the third analog input channel (in volts)
 > MEAS:CH2:VOLT?
-2.75
+0.9968
 ```
