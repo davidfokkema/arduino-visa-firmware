@@ -34,6 +34,7 @@
 #define VOLTAGE       3.3
 
 #define COM_IDN             "*IDN?"                       // literal *IDN?
+#define COM_GAPPIE          "gappie"                      // seriously?
 #define COM_WRITE_DAC       "^OUT:CH(%d) (%d+)$"          // e.g. OUT:CH0 1023
 #define COM_WRITE_DAC_VOLT  "^OUT:CH(%d):VOLT ([.%d]+)$"  // e.g. OUT:CH0:VOLT 2.5
 #define COM_READ_DAC        "^OUT:CH(%d)%?$"              // e.g. OUT:CH0?
@@ -41,8 +42,9 @@
 #define COM_READ_ADC        "^MEAS:CH(%d)%?$"             // e.g. MEAS:CH1?
 #define COM_READ_ADC_VOLT   "^MEAS:CH(%d):VOLT%?$"        // e.g. MEAS:CH1:VOLT?
 
-#define IDN_STRING          "Arduino VISA firmware v1.0.0"
+#define IDN_STRING          "Arduino VISA firmware v1.1.0"
 #define INVALID_CHANNEL_MSG "ERROR: Invalid channel number"
+#define GAPPIE_RESPONSE     "Seriously? Didn't you read the manual? Please reread the assignment. What is a gappie anyway?"
 
 #define BUFFER_LENGTH 100
 
@@ -86,6 +88,14 @@ void loop() {
   // request identification
   if (msg == COM_IDN) {
     Serial.println(IDN_STRING);
+  }
+
+  // easter egg / pitfall for students
+  // We ask students to look up the *IDN? command, but we use 'gappie' as a
+  // stand-in command in the manual. Some students don't really read the
+  // assignment and will use 'gappie' as a command.
+  else if (msg == COM_GAPPIE) {
+    Serial.println(GAPPIE_RESPONSE);
   }
 
   // write DAC value
