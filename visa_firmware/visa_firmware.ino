@@ -41,8 +41,10 @@
 #define COM_READ_DAC_VOLT   "^OUT:CH(%d):VOLT%?$"         // e.g. OUT:CH0:VOLT?
 #define COM_READ_ADC        "^MEAS:CH(%d)%?$"             // e.g. MEAS:CH1?
 #define COM_READ_ADC_VOLT   "^MEAS:CH(%d):VOLT%?$"        // e.g. MEAS:CH1:VOLT?
+#define COM_DIG_LOW         "^DIG:LOW:CH(%d)"             // e.g. DIG:LOW:CH2
+#define COM_DIG_HIGH        "^DIG:HGH:CH(%d)"             // e.g. DIG:HGH:CH2
 
-#define IDN_STRING          "Arduino VISA firmware v1.1.0"
+#define IDN_STRING          "Arduino VISA firmware v1.2.0"
 #define INVALID_CHANNEL_MSG "ERROR: Invalid channel number"
 #define GAPPIE_RESPONSE     "Seriously? Didn't you read the manual? Please reread the assignment. What is a gappie anyway?"
 
@@ -53,6 +55,8 @@ int ADCchannel[] = {A0, A1, A2, A3, A4, A5, A6, A7};
 
 #define MAX_DAC_CHANNEL sizeof(DACchannel)  / sizeof(int)
 #define MAX_ADC_CHANNEL sizeof(ADCchannel)  / sizeof(int)
+const int MIN_DIG_CHANNEL = 2;
+const int MAX_DIG_CHANNEL = 21;
 
 int DACvalues[MAX_DAC_CHANNEL];
 
@@ -159,6 +163,29 @@ void loop() {
       value = analogRead(ADCchannel[channel]);
       volt = fmap(value, 0, 1023, 0, VOLTAGE);
       Serial.println(volt, 4);
+    }
+    else Serial.println(INVALID_CHANNEL_MSG);
+  }
+
+  // set digital pin to LOW
+  else if (ms.Match(COM_DIG_LOW) == 1) {
+    channel = atoi(ms.GetCapture(buffer, 0));
+    if (channel >= MIN_DIG_CHANNEL && channel < MAX_DIG_CHANNEL) {
+      pinMode(channel, OUTPUT);
+      digitalWrite(channel, LOW);
+      Serial.println("LOW");
+    }
+    else Serial.println(INVALID_CHANNEL_MSG);
+  }
+
+  // set digital pin to HIGH
+  else if (ms.Match(COM_DIG_HIGH) == 1) {
+    channel = atoi(ms.GetCapture(buffer, 0));
+    if (channel >= MIN_DIG_CHANNEL && channel < MAX_DIG_CHANNEL) {
+      pinMode(channel, OUTPUT);
+      digitalWrite(channel, HIGH);
+      // Serial.println("HIGH");
+      pinMode()
     }
     else Serial.println(INVALID_CHANNEL_MSG);
   }
