@@ -41,9 +41,9 @@
 #define COM_READ_DAC_VOLT   "^OUT:CH(%d):VOLT%?$"         // e.g. OUT:CH0:VOLT?
 #define COM_READ_ADC        "^MEAS:CH(%d)%?$"             // e.g. MEAS:CH1?
 #define COM_READ_ADC_VOLT   "^MEAS:CH(%d):VOLT%?$"        // e.g. MEAS:CH1:VOLT?
-#define COM_SET_LOW         "^SET:LOW:CH(%d)"             // e.g. SET:LOW:CH2
-#define COM_SET_HIGH        "^SET:HIGH:CH(%d)"            // e.g. SET:HGH:CH2
-#define COM_READ_PIN        "^READ:CH(%d)"                // e.g. READ:CH2
+#define COM_SET_LOW         "^SET:LOW:CH(%d+)"             // e.g. SET:LOW:CH2
+#define COM_SET_HIGH        "^SET:HIGH:CH(%d+)"            // e.g. SET:HIGH:CH2
+#define COM_READ_PIN        "^READ:CH(%d+)"                // e.g. READ:CH2
 
 #define IDN_STRING          "Arduino VISA firmware v1.2.0"
 #define INVALID_CHANNEL_MSG "ERROR: Invalid channel number"
